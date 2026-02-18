@@ -28,3 +28,7 @@ wire/wire_gen.go
 .vscode/
 *.swp
 *.swo
+
+# Override global gitignore: track the db package in this project
+!**/db/
+!**/db/**
