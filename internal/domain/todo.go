@@ -28,4 +28,5 @@ type Todo struct {
 // on low-level detail (GORM). Both depend on this abstraction.
 type TodoRepository interface {
 	Create(todo *Todo) (*Todo, error)
+	GetbyID(id string) (*Todo, error)
 }

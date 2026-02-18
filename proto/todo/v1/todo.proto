@@ -34,9 +34,17 @@ message CreateTodoRequest {
 message CreateTodoResponse {
   Todo todo = 1;
 }
+message GetTodoRequest{
+  string id = 1;
+}
+
+message GetTodoResponse{
+  Todo todo = 1;
+}
 
 // TodoService is the gRPC service definition.
 // Each rpc maps to one handler method.
 service TodoService {
   rpc CreateTodo(CreateTodoRequest) returns (CreateTodoResponse);
+  rpc GetTodo(GetTodoRequest) returns (GetTodoResponse);
 }

@@ -65,3 +65,11 @@ func (r *todoRepository) Create(todo *domain.Todo) (*domain.Todo, error) {
 
 	return model.toDomain(), nil
 }
+
+func (r *todoRepository) GetbyID(id string) (*domain.Todo, error) {
+	var model todoModel
+	if err := r.db.Where("id = ?", id).First(&model).Error; err != nil {
+		return nil, err
+	}
+	return model.toDomain(), nil
+}

@@ -31,3 +31,11 @@ func (u *todoUsecase) CreateTodo(title, description string) (*domain.Todo, error
 
 	return u.repo.Create(todo)
 }
+
+func (u *todoUsecase) GetTodo(id string) (*domain.Todo, error) {
+	todo, err := u.repo.GetbyID(id)
+	if err != nil {
+		return nil, err
+	}
+	return todo, nil
+}

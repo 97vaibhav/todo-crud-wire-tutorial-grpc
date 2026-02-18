@@ -7,4 +7,5 @@ import "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/domain"
 // When you write tests for the handler, you mock this — not GORM.
 type TodoUsecase interface {
 	CreateTodo(title, description string) (*domain.Todo, error)
+	GetTodo(id string) (*domain.Todo, error)
 }

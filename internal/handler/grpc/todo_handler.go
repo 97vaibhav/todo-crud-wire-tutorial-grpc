@@ -37,6 +37,16 @@ func (h *TodoHandler) CreateTodo(ctx context.Context, req *todov1.CreateTodoRequ
 	}, nil
 }
 
+func (h *TodoHandler) GetTodo(ctx context.Context, req *todov1.GetTodoRequest) (*todov1.GetTodoResponse, error) {
+	todo, err := h.uc.GetTodo(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "get todo: %v", err)
+	}
+	return &todov1.GetTodoResponse{
+		Todo: domainToProto(todo),
+	}, nil
+}
+
 // domainToProto converts a domain.Todo → proto Todo message.
 // Keeping this as a separate function makes it reusable when you add GetTodo, ListTodos, etc.
 func domainToProto(t *domain.Todo) *todov1.Todo {
