@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package todo.v1;
+
+// go_package tells protoc where to put the generated Go files.
+// The part after ";" is the Go package alias used in imports.
+option go_package = "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/todo/v1;todov1";
+
+import "google/protobuf/timestamp.proto";
+
+// TodoStatus represents the lifecycle state of a todo item.
+enum TodoStatus {
+  TODO_STATUS_UNSPECIFIED = 0; // always have a zero-value for proto3 enums
+  TODO_STATUS_PENDING     = 1;
+  TODO_STATUS_IN_PROGRESS = 2;
+  TODO_STATUS_DONE        = 3;
+}
+
+// Todo is the core domain object represented in the API contract.
+message Todo {
+  string id          = 1;
+  string title       = 2;
+  string description = 3;
+  TodoStatus status  = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message CreateTodoRequest {
+  string title       = 1;
+  string description = 2;
+}
+
+message CreateTodoResponse {
+  Todo todo = 1;
+}
+
+// TodoService is the gRPC service definition.
+// Each rpc maps to one handler method.
+service TodoService {
+  rpc CreateTodo(CreateTodoRequest) returns (CreateTodoResponse);
+}

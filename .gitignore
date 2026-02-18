@@ -1,0 +1,30 @@
+# Environment
+.env
+
+# Go build output
+/server
+/bin/
+*.exe
+*.out
+
+# Go test cache
+*.test
+*.prof
+
+# Dependency vendor (if you ever use `go mod vendor`)
+vendor/
+
+# Generated proto code — regenerate with `make proto`
+gen/
+
+# Wire generated file — regenerate with `make wire`
+wire/wire_gen.go
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
