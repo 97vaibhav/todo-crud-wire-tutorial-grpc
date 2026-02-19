@@ -81,3 +81,18 @@ func (r *userRepository) FindByID(id string) (*domain.User, error) {
 func (r *userRepository) Delete(id string) error {
 	return r.db.Where("id = ?", id).Delete(&userModel{}).Error
 }
+
+func (r *userRepository) Update(id string, user *domain.User) (*domain.User, error) {
+	userModel := &userModel{
+		ID:           id,
+		Name:         user.Name,
+		Email:        user.Email,
+		PasswordHash: user.PasswordHash,
+		GroupID:      user.GroupID,
+	}
+	if err := r.db.Save(userModel).Error; err != nil {
+		return nil, err
+	}
+	userDomain := userModel.toDomain(user.GroupType)
+	return userDomain, nil
+}

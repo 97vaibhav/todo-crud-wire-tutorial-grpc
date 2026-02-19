@@ -59,6 +59,19 @@ message DeleteUserRequest {
 
 message DeleteUserResponse {}
 
+// ── UpdateUser (admin only) ────────────────────────────────────────────────────
+message UpdateUserRequest {
+  string user_id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  string group_id = 5;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+
 // ── ListGroups (admin only) ────────────────────────────────────────────────────
 message ListGroupsRequest {}
 
@@ -74,4 +87,5 @@ service AuthService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
   rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
 }

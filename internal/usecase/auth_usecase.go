@@ -14,4 +14,6 @@ type AuthUsecase interface {
 
 	// ListGroups returns all groups so admins can pick the right group_id.
 	ListGroups() ([]*domain.Group, error)
+
+	UpdateUser(id string, user *domain.User) (*domain.User, error)
 }

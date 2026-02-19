@@ -87,3 +87,11 @@ func (u *authUsecase) DeleteUser(userID string) error {
 func (u *authUsecase) ListGroups() ([]*domain.Group, error) {
 	return u.groupRepo.List()
 }
+
+func (u *authUsecase) UpdateUser(id string, user *domain.User) (*domain.User, error) {
+	updatedUser, err := u.userRepo.Update(id, user)
+	if err != nil {
+		return nil, err
+	}
+	return updatedUser, nil
+}

@@ -136,3 +136,24 @@ func domainGroupTypeToProto(t domain.GroupType) authv1.GroupType {
 		return authv1.GroupType_GROUP_TYPE_UNSPECIFIED
 	}
 }
+
+func (h *AuthHandler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest) (*authv1.UpdateUserResponse, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+
+	user, err := h.uc.UpdateUser(
+		req.GetUserId(),
+		&domain.User{
+			Name:         req.GetName(),
+			Email:        req.GetEmail(),
+			PasswordHash: req.GetPassword(),
+			GroupID:      req.GetGroupId(),
+		},
+	)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "update  user: %v", err)
+	}
+
+	return &authv1.UpdateUserResponse{User: domainUserToProto(user)}, nil
+}
