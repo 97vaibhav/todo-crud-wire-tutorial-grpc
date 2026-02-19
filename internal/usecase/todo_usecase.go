@@ -6,6 +6,6 @@ import "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/domain"
 // The gRPC handler depends on this interface, NOT the concrete implementation.
 // When you write tests for the handler, you mock this — not GORM.
 type TodoUsecase interface {
-	CreateTodo(title, description string) (*domain.Todo, error)
-	GetTodo(id string) (*domain.Todo, error)
+	// userID comes from the validated JWT claims — never from the request body.
+	CreateTodo(userID, title, description string) (*domain.Todo, error)
 }

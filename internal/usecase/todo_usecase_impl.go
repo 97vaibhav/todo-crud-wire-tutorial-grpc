@@ -11,15 +11,11 @@ type todoUsecase struct {
 }
 
 // NewTodoUsecase is a Wire provider.
-// Wire sees: needs domain.TodoRepository → returns TodoUsecase.
-// It injects the repository that was already built in the infrastructure layer.
 func NewTodoUsecase(repo domain.TodoRepository) TodoUsecase {
 	return &todoUsecase{repo: repo}
 }
 
-func (u *todoUsecase) CreateTodo(title, description string) (*domain.Todo, error) {
-	// Business rule: title is mandatory.
-	// This validation belongs here, not in the handler (presentation) or repository (data).
+func (u *todoUsecase) CreateTodo(userID, title, description string) (*domain.Todo, error) {
 	if title == "" {
 		return nil, errors.New("title is required")
 	}
@@ -27,15 +23,8 @@ func (u *todoUsecase) CreateTodo(title, description string) (*domain.Todo, error
 	todo := &domain.Todo{
 		Title:       title,
 		Description: description,
+		UserID:      userID, // comes from the JWT, not the request body
 	}
 
 	return u.repo.Create(todo)
-}
-
-func (u *todoUsecase) GetTodo(id string) (*domain.Todo, error) {
-	todo, err := u.repo.GetbyID(id)
-	if err != nil {
-		return nil, err
-	}
-	return todo, nil
 }

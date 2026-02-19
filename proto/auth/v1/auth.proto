@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/auth/v1;authv1";
+
+import "google/protobuf/timestamp.proto";
+
+// GroupType represents the role a user's group grants them.
+enum GroupType {
+  GROUP_TYPE_UNSPECIFIED = 0;
+  GROUP_TYPE_ADMIN       = 1;
+  GROUP_TYPE_GUEST       = 2;
+}
+
+message Group {
+  string    id         = 1;
+  string    name       = 2;
+  GroupType type       = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message User {
+  string    id         = 1;
+  string    name       = 2;
+  string    email      = 3;
+  string    group_id   = 4;
+  GroupType group_type = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+// ── Login ──────────────────────────────────────────────────────────────────────
+message LoginRequest {
+  string email    = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1; // JWT — store this on the client
+  User   user         = 2;
+}
+
+// ── CreateUser (admin only) ────────────────────────────────────────────────────
+message CreateUserRequest {
+  string name     = 1;
+  string email    = 2;
+  string password = 3;
+  string group_id = 4; // must be an existing group ID
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+// ── DeleteUser (admin only) ────────────────────────────────────────────────────
+message DeleteUserRequest {
+  string user_id = 1;
+}
+
+message DeleteUserResponse {}
+
+// ── ListGroups (admin only) ────────────────────────────────────────────────────
+message ListGroupsRequest {}
+
+message ListGroupsResponse {
+  repeated Group groups = 1;
+}
+
+service AuthService {
+  // Public — no JWT required.
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // Admin only — JWT required + caller must be ADMIN.
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+}

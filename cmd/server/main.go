@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	authv1 "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/auth/v1"
 	todov1 "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/todo/v1"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/config"
 	appwire "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/wire"
@@ -13,17 +14,15 @@ import (
 )
 
 func main() {
-	// Load config early so we know the port before Wire runs.
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	// Wire builds the entire dependency graph: Config → DB → Repo → Usecase → Handler.
-	// If any provider returns an error (e.g. DB connection fails), we exit here.
-	todoHandler, err := appwire.InitializeTodoHandler()
+	// Wire resolves the entire dependency graph in one call.
+	app, err := appwire.InitializeApp()
 	if err != nil {
-		log.Fatalf("failed to initialize dependencies: %v", err)
+		log.Fatalf("failed to initialize app: %v", err)
 	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPCPort))
@@ -31,18 +30,21 @@ func main() {
 		log.Fatalf("failed to listen on port %s: %v", cfg.GRPCPort, err)
 	}
 
-	grpcServer := grpc.NewServer()
+	// Register the auth interceptor so it runs before every handler.
+	// grpc.ChainUnaryInterceptor lets you add more interceptors later (e.g. logging, metrics).
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			app.AuthInterceptor.Unary(),
+		),
+	)
 
-	// Register our handler with the gRPC server.
-	// This links the generated service interface to our concrete implementation.
-	todov1.RegisterTodoServiceServer(grpcServer, todoHandler)
+	todov1.RegisterTodoServiceServer(grpcServer, app.TodoHandler)
+	authv1.RegisterAuthServiceServer(grpcServer, app.AuthHandler)
 
-	// reflection lets grpcurl/Postman discover your API without a proto file.
-	// Remove this in production if you don't want to expose the schema.
+	// Reflection lets grpcurl and Postman discover your API at runtime.
 	reflection.Register(grpcServer)
 
 	log.Printf("gRPC server listening on :%s", cfg.GRPCPort)
-
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

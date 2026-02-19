@@ -13,6 +13,7 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	GRPCPort   string
+	JWTSecret  string // used to sign and verify JWT tokens
 }
 
 // Load reads .env file if present, then falls back to real environment variables.
@@ -29,6 +30,7 @@ func Load() (*Config, error) {
 		DBPassword: getEnv("DB_PASSWORD", "postgres"),
 		DBName:     getEnv("DB_NAME", "tododb"),
 		GRPCPort:   getEnv("GRPC_PORT", "50051"),
+		JWTSecret:  getEnv("JWT_SECRET", "change-me-in-production"),
 	}, nil
 }
 

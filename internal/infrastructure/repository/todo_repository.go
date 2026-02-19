@@ -16,6 +16,7 @@ type todoModel struct {
 	Title       string    `gorm:"not null"`
 	Description string    `gorm:"type:text"`
 	Status      string    `gorm:"not null;default:'PENDING'"`
+	UserID      string    `gorm:"type:uuid;not null"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 }
@@ -33,6 +34,7 @@ func (m *todoModel) toDomain() *domain.Todo {
 		Title:       m.Title,
 		Description: m.Description,
 		Status:      domain.TodoStatus(m.Status),
+		UserID:      m.UserID,
 		CreatedAt:   m.CreatedAt,
 		UpdatedAt:   m.UpdatedAt,
 	}
@@ -57,6 +59,7 @@ func (r *todoRepository) Create(todo *domain.Todo) (*domain.Todo, error) {
 		Title:       todo.Title,
 		Description: todo.Description,
 		Status:      string(domain.TodoStatusPending),
+		UserID:      todo.UserID,
 	}
 
 	if err := r.db.Create(model).Error; err != nil {
