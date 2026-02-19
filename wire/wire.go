@@ -1,35 +1,37 @@
 //go:build wireinject
 // +build wireinject
 
-// The build tag above means this file is ONLY read by the wire CLI tool,
-// not by the normal Go compiler. wire_gen.go is read by the Go compiler instead.
-
 package wire
 
 import (
 	grpchandler "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/handler/grpc"
 	infradb "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/infrastructure/db"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/infrastructure/repository"
+	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/auth"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/config"
+	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/middleware"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/usecase"
 	"github.com/google/wire"
 )
 
-// ProviderSet groups all providers. Wire resolves the dependency graph from this set.
-// Order does NOT matter here — Wire figures out the order automatically.
 var ProviderSet = wire.NewSet(
 	config.Load,
+	auth.NewJWTService,
 	infradb.NewPostgresDB,
 	repository.NewTodoRepository,
+	repository.NewUserRepository,
+	repository.NewGroupRepository,
 	usecase.NewTodoUsecase,
+	usecase.NewAuthUsecase,
 	grpchandler.NewTodoHandler,
+	grpchandler.NewAuthHandler,
+	middleware.NewAuthInterceptor,
+	newApp,
 )
 
-// InitializeTodoHandler is the "injector" function.
-// Wire reads its signature: "I want a *TodoHandler and I have no inputs".
-// Wire then traces the dependency graph through ProviderSet and generates
-// the wiring code in wire_gen.go automatically.
-func InitializeTodoHandler() (*grpchandler.TodoHandler, error) {
+// InitializeApp is the single injector function Wire reads.
+// Wire traces all dependencies through ProviderSet and writes wire_gen.go.
+func InitializeApp() (*App, error) {
 	wire.Build(ProviderSet)
-	return nil, nil // Wire replaces this body entirely in wire_gen.go
+	return nil, nil
 }

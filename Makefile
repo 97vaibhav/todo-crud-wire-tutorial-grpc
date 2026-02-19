@@ -10,6 +10,11 @@ install-tools:
 	go install github.com/google/wire/cmd/wire@latest
 	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
+## Seed the database with default groups and the initial admin user.
+## Run once after migrate-up. Safe to run again (idempotent).
+seed:
+	go run ./cmd/seed
+
 ## ── Code generation ──────────────────────────────────────────────────────────
 ## Generate Go code from proto files using buf.
 proto:

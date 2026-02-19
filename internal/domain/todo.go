@@ -18,6 +18,7 @@ type Todo struct {
 	Title       string
 	Description string
 	Status      TodoStatus
+	UserID      string // owner — set from JWT claims, never from the request body
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
