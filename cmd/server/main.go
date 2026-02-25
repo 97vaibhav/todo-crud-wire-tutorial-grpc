@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -24,6 +25,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize app: %v", err)
 	}
+
+	// Start the Kafka audit consumer in the background. It reads from todo-events
+	// and writes to the audit_logs table. When you add Idea 2/3, start more consumers here.
+	ctx := context.Background()
+	go app.AuditConsumer.Run(ctx)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPCPort))
 	if err != nil {
