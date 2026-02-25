@@ -30,4 +30,5 @@ type Todo struct {
 type TodoRepository interface {
 	Create(todo *Todo) (*Todo, error)
 	GetbyID(id string) (*Todo, error)
+	List() ([]*Todo, error)
 }

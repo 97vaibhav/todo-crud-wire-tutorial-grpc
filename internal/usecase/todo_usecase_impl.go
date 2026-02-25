@@ -28,3 +28,14 @@ func (u *todoUsecase) CreateTodo(userID, title, description string) (*domain.Tod
 
 	return u.repo.Create(todo)
 }
+
+func (u *todoUsecase) ListTodos() ([]*domain.Todo, error) {
+	return u.repo.List()
+}
+
+func (u *todoUsecase) GetTodo(id string) (*domain.Todo, error) {
+	if id == "" {
+		return nil, errors.New("id is required")
+	}
+	return u.repo.GetbyID(id)
+}

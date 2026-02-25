@@ -8,4 +8,6 @@ import "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/domain"
 type TodoUsecase interface {
 	// userID comes from the validated JWT claims — never from the request body.
 	CreateTodo(userID, title, description string) (*domain.Todo, error)
+	ListTodos() ([]*domain.Todo, error)
+	GetTodo(id string) (*domain.Todo, error)
 }

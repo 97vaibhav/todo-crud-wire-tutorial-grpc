@@ -76,3 +76,15 @@ func (r *todoRepository) GetbyID(id string) (*domain.Todo, error) {
 	}
 	return model.toDomain(), nil
 }
+
+func (r *todoRepository) List() ([]*domain.Todo, error) {
+	var models []todoModel
+	if err := r.db.Find(&models).Error; err != nil {
+		return nil, err
+	}
+	todos := make([]*domain.Todo, len(models))
+	for i, m := range models {
+		todos[i] = m.toDomain()
+	}
+	return todos, nil
+}

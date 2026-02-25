@@ -3,8 +3,8 @@ package grpc
 import (
 	"context"
 
-	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/auth"
 	todov1 "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/todo/v1"
+	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/auth"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/domain"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/usecase"
 	"google.golang.org/grpc/codes"
@@ -37,6 +37,34 @@ func (h *TodoHandler) CreateTodo(ctx context.Context, req *todov1.CreateTodoRequ
 	return &todov1.CreateTodoResponse{
 		Todo: domainToProto(todo),
 	}, nil
+}
+
+func (h *TodoHandler) ListTodos(ctx context.Context, in *todov1.ListTodosRequest) (*todov1.ListTodosResponse, error) {
+	todos, err := h.uc.ListTodos()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "list todos: %v", err)
+	}
+	return &todov1.ListTodosResponse{
+		Todos: domainTodosToProtos(todos),
+	}, nil
+}
+
+func (h *TodoHandler) GetTodo(ctx context.Context, req *todov1.GetTodoRequest) (*todov1.GetTodoResponse, error) {
+	todo, err := h.uc.GetTodo(req.GetId())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "get todo: %v", err)
+	}
+	return &todov1.GetTodoResponse{
+		Todo: domainToProto(todo),
+	}, nil
+}
+
+func domainTodosToProtos(todos []*domain.Todo) []*todov1.Todo {
+	protoTodos := make([]*todov1.Todo, len(todos))
+	for i, t := range todos {
+		protoTodos[i] = domainToProto(t)
+	}
+	return protoTodos
 }
 
 func domainToProto(t *domain.Todo) *todov1.Todo {
