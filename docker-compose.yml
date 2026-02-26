@@ -18,5 +18,30 @@ services:
       timeout:  5s
       retries:  5
 
+  redpanda:
+    image: redpandadata/redpanda:latest
+    container_name: todo_redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 512M
+      - --overprovisioned
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092"
+
+  redpanda-console:
+    image: redpandadata/console:latest
+    container_name: todo_redpanda_console
+    environment:
+      KAFKA_BROKERS: localhost:9092
+    # Use host network so "localhost:9092" in metadata points to the host's
+    # port (forwarded to Redpanda). Go app (make run) also uses localhost:9092.
+    # Port 8080 is the host's 8080; access the UI at http://localhost:8080.
+    network_mode: "host"
+    depends_on:
+      - redpanda
+
 volumes:
   postgres_data:

@@ -9,6 +9,8 @@ import (
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/infrastructure/repository"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/auth"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/config"
+	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/kafka"
+	kafkaconsumer "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/kafka/consumer"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/middleware"
 	"github.com/97vaibhav/todo-crud-wire-tutorial-grpc/internal/usecase"
 	"github.com/google/wire"
@@ -21,6 +23,9 @@ var ProviderSet = wire.NewSet(
 	repository.NewTodoRepository,
 	repository.NewUserRepository,
 	repository.NewGroupRepository,
+	repository.NewAuditLogRepository,
+	kafka.NewProducer,
+	kafkaconsumer.NewAuditConsumer,
 	usecase.NewTodoUsecase,
 	usecase.NewAuthUsecase,
 	grpchandler.NewTodoHandler,

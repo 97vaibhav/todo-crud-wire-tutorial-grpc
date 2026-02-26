@@ -7,13 +7,14 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	GRPCPort   string
-	JWTSecret  string // used to sign and verify JWT tokens
+	DBHost      string
+	DBPort      string
+	DBUser      string
+	DBPassword  string
+	DBName      string
+	GRPCPort    string
+	JWTSecret   string // used to sign and verify JWT tokens
+	KafkaBroker string // Kafka bootstrap address for producers/consumersy
 }
 
 // Load reads .env file if present, then falls back to real environment variables.
@@ -24,13 +25,14 @@ func Load() (*Config, error) {
 	_ = godotenv.Load()
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
-		DBName:     getEnv("DB_NAME", "tododb"),
-		GRPCPort:   getEnv("GRPC_PORT", "50051"),
-		JWTSecret:  getEnv("JWT_SECRET", "change-me-in-production"),
+		DBHost:      getEnv("DB_HOST", "localhost"),
+		DBPort:      getEnv("DB_PORT", "5432"),
+		DBUser:      getEnv("DB_USER", "postgres"),
+		DBPassword:  getEnv("DB_PASSWORD", "postgres"),
+		DBName:      getEnv("DB_NAME", "tododb"),
+		GRPCPort:    getEnv("GRPC_PORT", "50051"),
+		JWTSecret:   getEnv("JWT_SECRET", "change-me-in-production"),
+		KafkaBroker: getEnv("KAFKA_BROKER", "localhost:9092"),
 	}, nil
 }
 
