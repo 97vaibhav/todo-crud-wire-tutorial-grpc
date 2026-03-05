@@ -10,3 +10,7 @@ plugins:
     out: gen
     opt:
       - paths=source_relative
+  - local: protoc-gen-grpc-gateway
+    out: gen
+    opt:
+      - paths=source_relative

@@ -5,6 +5,7 @@ package auth.v1;
 option go_package = "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/auth/v1;authv1";
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 // GroupType represents the role a user's group grants them.
 enum GroupType {
@@ -81,11 +82,34 @@ message ListGroupsResponse {
 
 service AuthService {
   // Public — no JWT required.
-  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/login"
+      body: "*"
+    };
+  }
 
   // Admin only — JWT required + caller must be ADMIN.
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
-  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
-  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/users"
+      body: "*"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/auth/users/{user_id}"
+    };
+  }
+  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/auth/groups"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/auth/users/{user_id}"
+      body: "*"
+    };
+  }
 }

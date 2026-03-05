@@ -7,6 +7,7 @@ package todo.v1;
 option go_package = "github.com/97vaibhav/todo-crud-wire-tutorial-grpc/gen/todo/v1;todov1";
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 // TodoStatus represents the lifecycle state of a todo item.
 enum TodoStatus {
@@ -51,7 +52,20 @@ message ListTodosResponse{
 // TodoService is the gRPC service definition.
 // Each rpc maps to one handler method.
 service TodoService {
-  rpc CreateTodo(CreateTodoRequest) returns (CreateTodoResponse);
-  rpc GetTodo(GetTodoRequest) returns (GetTodoResponse);
-  rpc ListTodos(ListTodosRequest) returns (ListTodosResponse);
+  rpc CreateTodo(CreateTodoRequest) returns (CreateTodoResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/todos"
+      body: "*"
+    };
+  }
+  rpc GetTodo(GetTodoRequest) returns (GetTodoResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/todos/{id}"
+    };
+  }
+  rpc ListTodos(ListTodosRequest) returns (ListTodosResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/todos"
+    };
+  }
 }
